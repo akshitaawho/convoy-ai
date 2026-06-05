@@ -33,6 +33,8 @@ function MapClickHandler({
 export default function Map() {
   const [stops, setStops] = useState<Stop[]>([]);
   const [routePoints, setRoutePoints] = useState<[number, number][]>([]);
+  const startStop = stops[0];
+  const endStop = stops[stops.length - 1];
 
   // add new stop while keeping previously selected stops
   function addStop(lat: number, lng: number) {
@@ -117,6 +119,22 @@ export default function Map() {
     </MapContainer>
 
     <div>
+      {startStop && (
+        <p>
+          <strong>Start:</strong>{" "}
+          {startStop.lat.toFixed(4)},
+          {startStop.lng.toFixed(4)}
+        </p>
+      )}
+
+      {endStop && (
+        <p>
+          <strong>End:</strong>{" "}
+          {endStop.lat.toFixed(4)},
+          {endStop.lng.toFixed(4)}
+        </p>
+      )}
+
       <h2>Selected Stops ({stops.length})</h2>
 
       {stops.map((stop, index) => (
