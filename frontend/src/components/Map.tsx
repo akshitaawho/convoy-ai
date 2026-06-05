@@ -78,6 +78,13 @@ export default function Map() {
     return total;
   }
 
+  // undos the previous stop
+  function undoLastStop() {
+    setStops((prev) => prev.slice(0, -1));
+
+    setRoutePoints((prev) => prev.slice(0, -1));
+  }
+
   return (
   <>
     <MapContainer
@@ -124,6 +131,12 @@ export default function Map() {
 
       <button onClick={clearRoute}>
         Clear Route
+      </button>
+
+      {" "}
+
+      <button onClick={undoLastStop}>
+        Undo Last Stop
       </button>
 
       {" "}
