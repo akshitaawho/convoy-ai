@@ -32,6 +32,7 @@ function MapClickHandler({
 
 export default function Map() {
   const [stops, setStops] = useState<Stop[]>([]);
+  const [routePoints, setRoutePoints] = useState<[number, number][]>([]);
 
   // add new stop while keeping previously selected stops
   function addStop(lat: number, lng: number) {
@@ -45,6 +46,16 @@ export default function Map() {
   // React updates the UI automatically, when the when stops become an empty array, markers, route lines and stop list dissapears.
   function clearRoute() {
     setStops([]);
+    setRoutePoints([]);
+  }
+
+  // generates route when generate route button is clicked
+  function generateRoute() {
+    console.log("Generating route...");
+
+    setRoutePoints(
+      stops.map(stop => [stop.lat, stop.lng] as [number, number])
+    );
   }
 
   return (
@@ -74,12 +85,12 @@ export default function Map() {
 
       {/* creates lines from point A to point B visually*/}
       <Polyline
-        positions={stops.map(stop => [stop.lat, stop.lng])}
+        positions={routePoints}
       />
     </MapContainer>
 
     <div>
-      <h2>Selected Stops</h2>
+      <h2>Selected Stops ({stops.length})</h2>
 
       {stops.map((stop, index) => (
         <p key={index}>
@@ -89,6 +100,12 @@ export default function Map() {
 
       <button onClick={clearRoute}>
         Clear Route
+      </button>
+
+      {" "}
+
+      <button onClick={generateRoute}>
+        Generate Route
       </button>
     </div>
   </>
