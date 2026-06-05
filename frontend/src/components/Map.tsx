@@ -4,8 +4,9 @@ import { useState } from "react";
 import {
   MapContainer,
   TileLayer,
-  useMapEvents,
   Marker,
+  Polyline,
+  useMapEvents,
 } from "react-leaflet";
 
 import "leaflet/dist/leaflet.css";
@@ -31,11 +32,19 @@ function MapClickHandler({
 
 export default function Map() {
   const [stops, setStops] = useState<Stop[]>([]);
+
+  // add new stop while keeping previously selected stops
   function addStop(lat: number, lng: number) {
     setStops((prev) => [
       ...prev,
       { lat, lng },
     ]);
+  }
+
+  // to clear the created route, clearRoute button added in Selected Stops div
+  // React updates the UI automatically, when the when stops become an empty array, markers, route lines and stop list dissapears.
+  function clearRoute() {
+    setStops([]);
   }
 
   return (
@@ -55,12 +64,18 @@ export default function Map() {
 
       <MapClickHandler onMapClick={addStop} />
 
+      {/* create a marker for each stop */}
       {stops.map((stop, index) => (
         <Marker
           key={index}
           position={[stop.lat, stop.lng]}
         />
       ))}
+
+      {/* creates lines from point A to point B visually*/}
+      <Polyline
+        positions={stops.map(stop => [stop.lat, stop.lng])}
+      />
     </MapContainer>
 
     <div>
@@ -71,6 +86,10 @@ export default function Map() {
           {index + 1}. {stop.lat.toFixed(4)}, {stop.lng.toFixed(4)}
         </p>
       ))}
+
+      <button onClick={clearRoute}>
+        Clear Route
+      </button>
     </div>
   </>
 );
