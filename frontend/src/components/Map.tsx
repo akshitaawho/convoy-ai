@@ -58,6 +58,26 @@ export default function Map() {
     );
   }
 
+  // calculates distance between two stop points
+  function calculateDistance() {
+    let total = 0;
+
+    for (let i = 1; i < stops.length; i++) {
+      const lat1 = stops[i - 1].lat;
+      const lng1 = stops[i - 1].lng;
+
+      const lat2 = stops[i].lat;
+      const lng2 = stops[i].lng;
+
+      const dx = lat2 - lat1;
+      const dy = lng2 - lng1;
+
+      total += Math.sqrt(dx * dx + dy * dy);
+    }
+
+    return total;
+  }
+
   return (
   <>
     <MapContainer
@@ -97,6 +117,10 @@ export default function Map() {
           {index + 1}. {stop.lat.toFixed(4)}, {stop.lng.toFixed(4)}
         </p>
       ))}
+
+      <p>
+        Route Length: {calculateDistance().toFixed(4)} units
+      </p>
 
       <button onClick={clearRoute}>
         Clear Route
