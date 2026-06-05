@@ -7,6 +7,7 @@ import {
   Marker,
   Polyline,
   useMapEvents,
+  useMap,
 } from "react-leaflet";
 
 import "leaflet/dist/leaflet.css";
@@ -30,11 +31,27 @@ function MapClickHandler({
   return null;
 }
 
+function ChangeMapCenter({
+  center,
+}: {
+  center: [number, number];
+}) {
+  const map = useMap();
+
+  map.setView(center);
+
+  return null;
+}
+
 export default function Map() {
   const [stops, setStops] = useState<Stop[]>([]);
   const [routePoints, setRoutePoints] = useState<[number, number][]>([]);
+  const [searchText, setSearchText] = useState("");
+  const [mapCenter, setMapCenter] =
+    useState<[number, number]>([24.4539, 54.3773]);
   const startStop = stops[0];
   const endStop = stops[stops.length - 1];
+  const [routeGenerated, setRouteGenerated] = useState(false);
 
   // add new stop while keeping previously selected stops
   function addStop(lat: number, lng: number) {
@@ -42,6 +59,8 @@ export default function Map() {
       ...prev,
       { lat, lng },
     ]);
+
+    setRouteGenerated(false);
   }
 
   // to clear the created route, clearRoute button added in Selected Stops div
@@ -49,6 +68,7 @@ export default function Map() {
   function clearRoute() {
     setStops([]);
     setRoutePoints([]);
+    setRouteGenerated(false);
   }
 
   // generates route when generate route button is clicked
@@ -58,6 +78,8 @@ export default function Map() {
     setRoutePoints(
       stops.map(stop => [stop.lat, stop.lng] as [number, number])
     );
+
+    setRouteGenerated(true);
   }
 
   // calculates distance between two stop points
@@ -87,10 +109,28 @@ export default function Map() {
     setRoutePoints((prev) => prev.slice(0, -1));
   }
 
+  function searchLocation() {
+    console.log("Searching for:", searchText);
+    setMapCenter([28.6129, 77.2295]);
+  }
+
   return (
   <>
+    <div>
+      <input
+        type="text"
+        placeholder="Search location..."
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+      />
+
+      <button onClick={searchLocation}>
+        Search
+      </button>
+    </div>
+
     <MapContainer
-      center={[24.4539, 54.3773]}
+      center={mapCenter}
       zoom={10}
       style={{
         height: "500px",
@@ -101,6 +141,8 @@ export default function Map() {
         attribution='&copy; OpenStreetMap contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+
+      <ChangeMapCenter center={mapCenter} />
 
       <MapClickHandler onMapClick={addStop} />
 
@@ -145,6 +187,10 @@ export default function Map() {
 
       <p>
         Route Length: {calculateDistance().toFixed(4)} units
+      </p>
+
+      <p>
+        Route Status: {routeGenerated ? "Generated" : "Not Generated"}
       </p>
 
       <button onClick={clearRoute}>
