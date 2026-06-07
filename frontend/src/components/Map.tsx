@@ -55,6 +55,7 @@ export default function Map() {
   const endStop = stops[stops.length - 1];
   const [routeGenerated, setRouteGenerated] = useState(false);
   const [mapZoom, setMapZoom] = useState(10);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
 
   // add new stop while keeping previously selected stops
   function addStop(lat: number, lng: number) {
@@ -132,6 +133,38 @@ export default function Map() {
     }
   }
 
+  async function getSuggestions(text: string) {
+    console.log("Suggestions for:", text);
+
+    if (text.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    const response = await fetch(
+    `/api/suggestions?q=${encodeURIComponent(text)}`
+  )
+
+    const data = await response.json();
+
+    console.log(data);
+
+    setSuggestions(data.slice(0, 5));
+    console.log("Suggestions loaded:", data.slice(0, 5));
+  }
+
+  function selectSuggestion(place: any) {
+    const lat = Number(place.lat);
+    const lon = Number(place.lon);
+
+    setMapCenter([lat, lon]);
+    setMapZoom(16);
+
+    setSearchText(place.display_name);
+
+    setSuggestions([]);
+  }
+
   return (
   <>
     <div>
@@ -139,12 +172,43 @@ export default function Map() {
         type="text"
         placeholder="Search location..."
         value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
+        onChange={(e) => {
+          setSearchText(e.target.value);
+          getSuggestions(e.target.value);
+        }}
       />
 
       <button onClick={searchLocation}>
         Search
       </button>
+
+      {suggestions.length > 0 && (
+        <div
+          style={{
+            border: "1px solid #ccc",
+            maxWidth: "400px",
+            backgroundColor: "white",
+          }}
+        >
+          {suggestions.map((place, index) => (
+            <div
+              key={index}
+              onClick={() => selectSuggestion(place)}
+              style={{
+                padding: "8px",
+                cursor: "pointer",
+                borderBottom: "1px solid #eee",
+              }}
+            >
+              <div>
+                <strong>{place.name}</strong>
+                <br />
+                <small>{place.display_name}</small>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
 
     <MapContainer
