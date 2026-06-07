@@ -33,12 +33,14 @@ function MapClickHandler({
 
 function ChangeMapCenter({
   center,
+  zoom,
 }: {
   center: [number, number];
+  zoom:number;
 }) {
   const map = useMap();
 
-  map.setView(center);
+  map.setView(center, zoom);
 
   return null;
 }
@@ -52,6 +54,7 @@ export default function Map() {
   const startStop = stops[0];
   const endStop = stops[stops.length - 1];
   const [routeGenerated, setRouteGenerated] = useState(false);
+  const [mapZoom, setMapZoom] = useState(10);
 
   // add new stop while keeping previously selected stops
   function addStop(lat: number, lng: number) {
@@ -109,9 +112,24 @@ export default function Map() {
     setRoutePoints((prev) => prev.slice(0, -1));
   }
 
-  function searchLocation() {
+  async function searchLocation() {
     console.log("Searching for:", searchText);
-    setMapCenter([28.6129, 77.2295]);
+
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${searchText}`
+    );
+
+    const data = await response.json();
+
+    console.log(data);
+
+    if (data.length > 0) {
+      const lat = Number(data[0].lat);
+      const lon = Number(data[0].lon);
+
+      setMapCenter([lat, lon]);
+      setMapZoom(16);
+    }
   }
 
   return (
@@ -131,7 +149,7 @@ export default function Map() {
 
     <MapContainer
       center={mapCenter}
-      zoom={10}
+      zoom={mapZoom}
       style={{
         height: "500px",
         width: "100%",
@@ -142,7 +160,10 @@ export default function Map() {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      <ChangeMapCenter center={mapCenter} />
+      <ChangeMapCenter
+        center={mapCenter}
+        zoom={mapZoom}
+      />
 
       <MapClickHandler onMapClick={addStop} />
 
