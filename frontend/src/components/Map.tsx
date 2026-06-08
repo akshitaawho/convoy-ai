@@ -53,6 +53,8 @@ export default function Map() {
   const [routeGenerated, setRouteGenerated] = useState(false);
   const [mapZoom, setMapZoom] = useState(10);
   const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [routeDistance, setRouteDistance] = useState(0);
+  const [routeDuration, setRouteDuration] = useState(0);
 
   // add new stop while keeping previously selected stops
   function addStop(lat: number, lng: number) {
@@ -94,6 +96,9 @@ export default function Map() {
     const data = await response.json();
 
     console.log(data);
+
+    setRouteDistance(data.routes[0].distance);
+    setRouteDuration(data.routes[0].duration);
 
     const coordinates =
       data.routes[0].geometry.coordinates;
@@ -259,7 +264,11 @@ export default function Map() {
       ))}
 
       <p>
-        Route Length: {calculateDistance().toFixed(4)} units
+        Route Length: {(routeDistance / 1000).toFixed(2)} km
+      </p>
+
+      <p>
+        Estimated Time: {(routeDuration / 60).toFixed(0)} min
       </p>
 
       <p>
