@@ -73,12 +73,37 @@ export default function Map() {
   }
 
   // generates route when generate route button is clicked
-  function generateRoute() {
+  async function generateRoute() {
     console.log("Generating route...");
 
-    setRoutePoints(
-      stops.map(stop => [stop.lat, stop.lng] as [number, number])
+    if (stops.length < 2) {
+      alert("Select at least 2 stops");
+      return;
+    }
+
+    const response = await fetch("/api/route", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        stops,
+      }),
+    });
+
+    const data = await response.json();
+
+    console.log(data);
+
+    const coordinates =
+      data.routes[0].geometry.coordinates;
+
+    const route = coordinates.map(
+      ([lng, lat]: [number, number]) =>
+        [lat, lng] as [number, number]
     );
+
+    setRoutePoints(route);
 
     setRouteGenerated(true);
   }
