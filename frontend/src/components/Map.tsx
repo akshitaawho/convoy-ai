@@ -13,6 +13,7 @@ import {
 import "leaflet/dist/leaflet.css";
 import { Stop } from "../types";
 import SearchBar from "./SearchBar";
+import RouteInfo from "./RouteInfo";
 
 function MapClickHandler({
   onMapClick,
@@ -238,59 +239,17 @@ export default function Map() {
       />
     </MapContainer>
 
-    <div>
-      {startStop && (
-        <p>
-          <strong>Start:</strong>{" "}
-          {startStop.lat.toFixed(4)},
-          {startStop.lng.toFixed(4)}
-        </p>
-      )}
-
-      {endStop && (
-        <p>
-          <strong>End:</strong>{" "}
-          {endStop.lat.toFixed(4)},
-          {endStop.lng.toFixed(4)}
-        </p>
-      )}
-
-      <h2>Selected Stops ({stops.length})</h2>
-
-      {stops.map((stop, index) => (
-        <p key={index}>
-          {index + 1}. {stop.lat.toFixed(4)}, {stop.lng.toFixed(4)}
-        </p>
-      ))}
-
-      <p>
-        Route Length: {(routeDistance / 1000).toFixed(2)} km
-      </p>
-
-      <p>
-        Estimated Time: {(routeDuration / 60).toFixed(0)} min
-      </p>
-
-      <p>
-        Route Status: {routeGenerated ? "Generated" : "Not Generated"}
-      </p>
-
-      <button onClick={clearRoute}>
-        Clear Route
-      </button>
-
-      {" "}
-
-      <button onClick={undoLastStop}>
-        Undo Last Stop
-      </button>
-
-      {" "}
-
-      <button onClick={generateRoute}>
-        Generate Route
-      </button>
-    </div>
+    <RouteInfo
+      startStop={startStop}
+      endStop={endStop}
+      stops={stops}
+      routeDistance={routeDistance}
+      routeDuration={routeDuration}
+      routeGenerated={routeGenerated}
+      clearRoute={clearRoute}
+      undoLastStop={undoLastStop}
+      generateRoute={generateRoute}
+    />
   </>
 );
 }
