@@ -11,11 +11,8 @@ import {
 } from "react-leaflet";
 
 import "leaflet/dist/leaflet.css";
-
-type Stop = {
-  lat: number;
-  lng: number;
-};
+import { Stop } from "../types";
+import SearchBar from "./SearchBar";
 
 function MapClickHandler({
   onMapClick,
@@ -117,7 +114,7 @@ export default function Map() {
     console.log("Searching for:", searchText);
 
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${searchText}`
+      `/api/suggestions?q=${encodeURIComponent(searchText)}`
     );
 
     const data = await response.json();
@@ -167,50 +164,16 @@ export default function Map() {
 
   return (
   <>
-    <div>
-      <input
-        type="text"
-        placeholder="Search location..."
-        value={searchText}
-        onChange={(e) => {
-          setSearchText(e.target.value);
-          getSuggestions(e.target.value);
-        }}
-      />
 
-      <button onClick={searchLocation}>
-        Search
-      </button>
-
-      {suggestions.length > 0 && (
-        <div
-          style={{
-            border: "1px solid #ccc",
-            maxWidth: "400px",
-            backgroundColor: "white",
-          }}
-        >
-          {suggestions.map((place, index) => (
-            <div
-              key={index}
-              onClick={() => selectSuggestion(place)}
-              style={{
-                padding: "8px",
-                cursor: "pointer",
-                borderBottom: "1px solid #eee",
-              }}
-            >
-              <div>
-                <strong>{place.name}</strong>
-                <br />
-                <small>{place.display_name}</small>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-
+    <SearchBar
+      searchText={searchText}
+      setSearchText={setSearchText}
+      searchLocation={searchLocation}
+      getSuggestions={getSuggestions}
+      suggestions={suggestions}
+      selectSuggestion={selectSuggestion}
+    />
+    
     <MapContainer
       center={mapCenter}
       zoom={mapZoom}
