@@ -1,4 +1,5 @@
 import { Stop } from "../types";
+import ControlButtons from "./ControlButtons";
 
 type RouteInfoProps = {
   startStop?: Stop;
@@ -61,21 +62,12 @@ export default function RouteInfo({
         Route Status: {routeGenerated ? "Generated" : "Not Generated"}
       </p>
 
-      <button onClick={clearRoute}>
-        Clear Route
-      </button>
+      <ControlButtons
+        clearRoute={clearRoute}
+        undoLastStop={undoLastStop}
+        generateRoute={generateRoute}
+        />
 
-      {" "}
-
-      <button onClick={undoLastStop}>
-        Undo Last Stop
-      </button>
-
-      {" "}
-
-      <button onClick={generateRoute}>
-        Generate Route
-      </button>
     </div>
   );
 }

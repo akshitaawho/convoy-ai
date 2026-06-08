@@ -139,10 +139,46 @@ export default function Map() {
   }
 
   // undos the previous stop
-  function undoLastStop() {
-    setStops((prev) => prev.slice(0, -1));
+  async function undoLastStop() {
+    const updatedStops = stops.slice(0, -1);
 
-    setRoutePoints((prev) => prev.slice(0, -1));
+    setStops(updatedStops);
+
+    if (updatedStops.length < 2) {
+      setRoutePoints([]);
+      setRouteDistance(0);
+      setRouteDuration(0);
+      setRouteGenerated(false);
+      return;
+    }
+
+    const response = await fetch("/api/route", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        stops: updatedStops,
+      }),
+    });
+
+    const data = await response.json();
+
+    const coordinates =
+      data.routes[0].geometry.coordinates;
+
+    const route = coordinates.map(
+      ([lng, lat]: [number, number]) =>
+        [lat, lng] as [number, number]
+    );
+
+    setRoutePoints(route);
+
+    setRouteDistance(data.routes[0].distance);
+
+    setRouteDuration(data.routes[0].duration);
+
+    setRouteGenerated(true);
   }
 
   async function searchLocation() {
