@@ -45,9 +45,9 @@ export default function RouteInfo({
 
       {stops.map((stop, index) => (
         <p key={index}>
-          {index + 1}. {stop.lat.toFixed(4)}, {stop.lng.toFixed(4)}
+            {index + 1}. {stop.name}
         </p>
-      ))}
+        ))}
 
       <p>
         Route Length: {(routeDistance / 1000).toFixed(2)} km

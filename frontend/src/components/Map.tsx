@@ -61,7 +61,11 @@ export default function Map() {
   function addStop(lat: number, lng: number) {
     setStops((prev) => [
       ...prev,
-      { lat, lng },
+      {
+        lat,
+        lng,
+        name: `Stop ${prev.length + 1}`,
+      },
     ]);
 
     setRouteGenerated(false);
