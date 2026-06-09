@@ -30,53 +30,53 @@ export default function RouteInfo({
         Route Summary
       </h2>
 
-      <div className="space-y-2 mb-4">
-        {startStop && (
-          <p>
-            <span className="font-medium">Start:</span>{" "}
-            {startStop.name}
-          </p>
-        )}
+      <div className="space-y-3 mb-5 text-sm md:text-base">
+        <div className="flex justify-between">
+          <span>Stops</span>
+          <span className="font-medium">
+            {stops.length}
+          </span>
+        </div>
 
-        {endStop && (
-          <p>
-            <span className="font-medium">End:</span>{" "}
-            {endStop.name}
-          </p>
-        )}
+        <div className="flex justify-between">
+          <span>Distance</span>
+          <span className="font-medium">
+            {(routeDistance / 1000).toFixed(2)} km
+          </span>
+        </div>
 
-        <p>
-          <span className="font-medium">Stops:</span>{" "}
-          {stops.length}
-        </p>
+        <div className="flex justify-between">
+          <span>Duration</span>
+          <span className="font-medium">
+            {(routeDuration / 60).toFixed(0)} min
+          </span>
+        </div>
 
-        <p>
-          <span className="font-medium">Distance:</span>{" "}
-          {(routeDistance / 1000).toFixed(2)} km
-        </p>
-
-        <p>
-          <span className="font-medium">Time:</span>{" "}
-          {(routeDuration / 60).toFixed(0)} min
-        </p>
-
-        <p>
-          <span className="font-medium">Status:</span>{" "}
-          {routeGenerated ? "Ready" : "Not Generated"}
-        </p>
+        <div className="flex justify-between">
+          <span>Status</span>
+          <span className="font-medium">
+            {routeGenerated ? "Ready" : "Not Generated"}
+          </span>
+        </div>
       </div>
 
       {stops.length > 0 && (
         <>
-          <h3 className="font-medium mb-2">
-            Stops
+          <h3 className="font-medium text-gray-700 mb-3">
+            Route Stops
           </h3>
 
-          <div className="space-y-1 mb-4">
+          <div className="space-y-2 mb-5">
             {stops.map((stop, index) => (
-              <p key={index}>
-                {index + 1}. {stop.name}
-              </p>
+              <div
+                key={index}
+                className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2"
+              >
+                <span className="font-medium">
+                  {index + 1}.
+                </span>{" "}
+                {stop.name}
+              </div>
             ))}
           </div>
         </>
