@@ -232,7 +232,7 @@ export default function Map() {
     console.log("Suggestions loaded:", data.slice(0, 5));
   }
 
-  function selectSuggestion(place: any) {
+  async function selectSuggestion(place: any) {
     const lat = Number(place.lat);
     const lon = Number(place.lon);
 
@@ -242,6 +242,19 @@ export default function Map() {
     setSearchText(place.display_name);
 
     setSuggestions([]);
+
+    setStops((prev) => [
+      ...prev,
+      {
+        lat,
+        lng: lon,
+        name:
+          place.name ||
+          place.display_name,
+      },
+    ]);
+
+    setRouteGenerated(false);
   }
 
   return (

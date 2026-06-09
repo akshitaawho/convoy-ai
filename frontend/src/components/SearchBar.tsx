@@ -16,43 +16,79 @@ export default function SearchBar({
   selectSuggestion,
 }: SearchBarProps) {
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="Search location..."
-        value={searchText}
-        onChange={(e) => {
-          setSearchText(e.target.value);
-          getSuggestions(e.target.value);
-        }}
-      />
+    <div className="mb-6 relative">
+      <div className="flex gap-3">
+        <input
+          type="text"
+          placeholder="Where are you going?"
+          value={searchText}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+            getSuggestions(e.target.value);
+          }}
+          className="
+            flex-1
+            px-4
+            py-3
+            rounded-xl
+            border
+            border-gray-300
+            bg-white
+            focus:outline-none
+            focus:border-[#FF856D]
+          "
+        />
 
-      <button onClick={searchLocation}>
-        Search
-      </button>
+        <button
+          onClick={searchLocation}
+          className="
+            px-5
+            py-3
+            rounded-xl
+            bg-[#FF856D]
+            text-white
+            font-medium
+            hover:opacity-90
+            transition
+          "
+        >
+          Search
+        </button>
+      </div>
 
       {suggestions.length > 0 && (
         <div
-          style={{
-            border: "1px solid #ccc",
-            maxWidth: "400px",
-            backgroundColor: "white",
-          }}
+          className="
+            absolute
+            z-[9999]
+            mt-2
+            w-full
+            bg-white
+            border
+            border-gray-200
+            rounded-xl
+            overflow-hidden
+          "
         >
           {suggestions.map((place, index) => (
             <div
               key={index}
               onClick={() => selectSuggestion(place)}
-              style={{
-                padding: "8px",
-                cursor: "pointer",
-                borderBottom: "1px solid #eee",
-              }}
+              className="
+                px-4
+                py-3
+                cursor-pointer
+                hover:bg-gray-100
+                border-b
+                border-gray-100
+              "
             >
-              <div>
-                <strong>{place.name}</strong>
-                <br />
-                <small>{place.display_name}</small>
+              <div className="font-medium">
+                {place.name}
+              </div>
+
+              <div className="text-sm text-gray-500">
+                {place.display_name}
               </div>
             </div>
           ))}
