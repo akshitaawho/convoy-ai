@@ -6,10 +6,10 @@ import {
   TileLayer,
   Marker,
   Polyline,
+  Popup,
   useMapEvents,
   useMap,
 } from "react-leaflet";
-
 import "leaflet/dist/leaflet.css";
 import { Stop } from "../types";
 import SearchBar from "./SearchBar";
@@ -282,7 +282,13 @@ export default function Map() {
           <Marker
             key={index}
             position={[stop.lat, stop.lng]}
-          />
+          >
+            <Popup>
+              <strong>{stop.name}</strong>
+              <br />
+              Stop {index + 1}
+            </Popup>
+          </Marker>
         ))}
 
         {/* creates lines from point A to point B visually*/}
