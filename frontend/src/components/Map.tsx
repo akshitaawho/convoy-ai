@@ -58,13 +58,24 @@ export default function Map() {
   const [routeDuration, setRouteDuration] = useState(0);
 
   // add new stop while keeping previously selected stops
-  function addStop(lat: number, lng: number) {
+  async function addStop(lat: number, lng: number) {
+    const response = await fetch(
+      `/api/reverse-geocode?lat=${lat}&lon=${lng}`
+    );
+
+    const data = await response.json();
+
+    const placeName =
+      data.name ||
+      data.display_name ||
+      `Stop ${stops.length + 1}`;
+
     setStops((prev) => [
       ...prev,
       {
         lat,
         lng,
-        name: `Stop ${prev.length + 1}`,
+        name: placeName,
       },
     ]);
 
@@ -244,41 +255,43 @@ export default function Map() {
       suggestions={suggestions}
       selectSuggestion={selectSuggestion}
     />
-    
-    <MapContainer
-      center={mapCenter}
-      zoom={mapZoom}
-      style={{
-        height: "500px",
-        width: "100%",
-      }}
-    >
-      <TileLayer
-        attribution='&copy; OpenStreetMap contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
 
-      <ChangeMapCenter
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      <MapContainer
         center={mapCenter}
         zoom={mapZoom}
-      />
-
-      <MapClickHandler onMapClick={addStop} />
-
-      {/* create a marker for each stop */}
-      {stops.map((stop, index) => (
-        <Marker
-          key={index}
-          position={[stop.lat, stop.lng]}
+        style={{
+          height: "55vh",
+          width: "100%",
+        }}
+      >
+        <TileLayer
+          attribution='&copy; OpenStreetMap contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-      ))}
 
-      {/* creates lines from point A to point B visually*/}
-      <Polyline
-        positions={routePoints}
-      />
-    </MapContainer>
+        <ChangeMapCenter
+          center={mapCenter}
+          zoom={mapZoom}
+        />
 
+        <MapClickHandler onMapClick={addStop} />
+
+        {/* create a marker for each stop */}
+        {stops.map((stop, index) => (
+          <Marker
+            key={index}
+            position={[stop.lat, stop.lng]}
+          />
+        ))}
+
+        {/* creates lines from point A to point B visually*/}
+        <Polyline
+          positions={routePoints}
+        />
+      </MapContainer>
+    </div>
+    
     <RouteInfo
       startStop={startStop}
       endStop={endStop}

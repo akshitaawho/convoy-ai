@@ -4,9 +4,9 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 
   const lat = searchParams.get("lat");
-  const lng = searchParams.get("lng");
+  const lon = searchParams.get("lon");
 
-  if (!lat || !lng) {
+  if (!lat || !lon) {
     return NextResponse.json(
       { error: "Missing coordinates" },
       { status: 400 }
@@ -14,10 +14,11 @@ export async function GET(request: NextRequest) {
   }
 
   const response = await fetch(
-    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
     {
       headers: {
         "User-Agent": "ConvoyAI/1.0",
+        Accept: "application/json",
       },
     }
   );

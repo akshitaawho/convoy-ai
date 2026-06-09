@@ -25,49 +25,68 @@ export default function RouteInfo({
   generateRoute,
 }: RouteInfoProps) {
   return (
-    <div>
-      {startStop && (
+    <div className="mt-4 bg-white border border-gray-200 rounded-2xl p-5">
+      <h2 className="text-xl font-semibold mb-4">
+        Route Summary
+      </h2>
+
+      <div className="space-y-2 mb-4">
+        {startStop && (
+          <p>
+            <span className="font-medium">Start:</span>{" "}
+            {startStop.name}
+          </p>
+        )}
+
+        {endStop && (
+          <p>
+            <span className="font-medium">End:</span>{" "}
+            {endStop.name}
+          </p>
+        )}
+
         <p>
-          <strong>Start:</strong>{" "}
-          {startStop.lat.toFixed(4)},
-          {startStop.lng.toFixed(4)}
+          <span className="font-medium">Stops:</span>{" "}
+          {stops.length}
         </p>
-      )}
 
-      {endStop && (
         <p>
-          <strong>End:</strong>{" "}
-          {endStop.lat.toFixed(4)},
-          {endStop.lng.toFixed(4)}
+          <span className="font-medium">Distance:</span>{" "}
+          {(routeDistance / 1000).toFixed(2)} km
         </p>
+
+        <p>
+          <span className="font-medium">Time:</span>{" "}
+          {(routeDuration / 60).toFixed(0)} min
+        </p>
+
+        <p>
+          <span className="font-medium">Status:</span>{" "}
+          {routeGenerated ? "Ready" : "Not Generated"}
+        </p>
+      </div>
+
+      {stops.length > 0 && (
+        <>
+          <h3 className="font-medium mb-2">
+            Stops
+          </h3>
+
+          <div className="space-y-1 mb-4">
+            {stops.map((stop, index) => (
+              <p key={index}>
+                {index + 1}. {stop.name}
+              </p>
+            ))}
+          </div>
+        </>
       )}
-
-      <h2>Selected Stops ({stops.length})</h2>
-
-      {stops.map((stop, index) => (
-        <p key={index}>
-            {index + 1}. {stop.name}
-        </p>
-        ))}
-
-      <p>
-        Route Length: {(routeDistance / 1000).toFixed(2)} km
-      </p>
-
-      <p>
-        Estimated Time: {(routeDuration / 60).toFixed(0)} min
-      </p>
-
-      <p>
-        Route Status: {routeGenerated ? "Generated" : "Not Generated"}
-      </p>
 
       <ControlButtons
         clearRoute={clearRoute}
         undoLastStop={undoLastStop}
         generateRoute={generateRoute}
-        />
-
+      />
     </div>
   );
 }
