@@ -14,6 +14,15 @@ import "leaflet/dist/leaflet.css";
 import { Stop } from "../types";
 import SearchBar from "./SearchBar";
 import RouteInfo from "./RouteInfo";
+import L from "leaflet";
+// import "../fixLeafletIcons";
+
+const convoyIcon = new L.Icon({
+  iconUrl: "/markers/location-pin.png",
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
 
 function MapClickHandler({
   onMapClick,
@@ -293,6 +302,7 @@ useEffect(() => {
           <Marker
             key={index}
             position={[stop.lat, stop.lng]}
+            icon={convoyIcon}
           >
             <Popup>
               <strong>{stop.name}</strong>
