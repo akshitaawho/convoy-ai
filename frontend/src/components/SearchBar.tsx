@@ -5,6 +5,7 @@ type SearchBarProps = {
   getSuggestions: (text: string) => void;
   suggestions: any[];
   selectSuggestion: (place: any) => void;
+  mapCenter: [number, number];
 };
 
 export default function SearchBar({
@@ -14,6 +15,7 @@ export default function SearchBar({
   getSuggestions,
   suggestions,
   selectSuggestion,
+  mapCenter,
 }: SearchBarProps) {
   return (
     <div className="mb-6 relative">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -56,6 +56,23 @@ export default function Map() {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [routeDistance, setRouteDistance] = useState(0);
   const [routeDuration, setRouteDuration] = useState(0);
+
+// real-time location
+useEffect(() => {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      setMapCenter([
+        position.coords.latitude,
+        position.coords.longitude,
+      ]);
+
+      setMapZoom(15);
+    },
+    (error) => {
+      console.log("Location access denied", error);
+    }
+  );
+}, []);
 
   // add new stop while keeping previously selected stops
   async function addStop(lat: number, lng: number) {
@@ -127,26 +144,6 @@ export default function Map() {
     setRoutePoints(route);
 
     setRouteGenerated(true);
-  }
-
-  // calculates distance between two stop points
-  function calculateDistance() {
-    let total = 0;
-
-    for (let i = 1; i < stops.length; i++) {
-      const lat1 = stops[i - 1].lat;
-      const lng1 = stops[i - 1].lng;
-
-      const lat2 = stops[i].lat;
-      const lng2 = stops[i].lng;
-
-      const dx = lat2 - lat1;
-      const dy = lng2 - lng1;
-
-      total += Math.sqrt(dx * dx + dy * dy);
-    }
-
-    return total;
   }
 
   // undos the previous stop
@@ -221,8 +218,8 @@ export default function Map() {
     }
 
     const response = await fetch(
-    `/api/suggestions?q=${encodeURIComponent(text)}`
-  )
+      `/api/suggestions?q=${encodeURIComponent(text)}&lat=${mapCenter[0]}&lon=${mapCenter[1]}`
+    )
 
     const data = await response.json();
 
@@ -267,6 +264,7 @@ export default function Map() {
       getSuggestions={getSuggestions}
       suggestions={suggestions}
       selectSuggestion={selectSuggestion}
+      mapCenter={mapCenter}
     />
 
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
