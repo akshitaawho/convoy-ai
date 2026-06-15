@@ -1,56 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Polyline,
-  Popup,
-  useMapEvents,
-  useMap,
-} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import MapView from "./MapView";
 import { Stop } from "../types";
 import SearchBar from "./SearchBar";
 import RouteInfo from "./RouteInfo";
-import L from "leaflet";
-// import "../fixLeafletIcons";
 
-const convoyIcon = new L.Icon({
-  iconUrl: "/markers/location-pin.png",
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
-});
-
-function MapClickHandler({
-  onMapClick,
-}: {
-  onMapClick: (lat: number, lng: number) => void;
-}) {
-  useMapEvents({
-    click(e) {
-      onMapClick(e.latlng.lat, e.latlng.lng);
-    },
-  });
-
-  return null;
-}
-
-function ChangeMapCenter({
-  center,
-  zoom,
-}: {
-  center: [number, number];
-  zoom:number;
-}) {
-  const map = useMap();
-
-  map.setView(center, zoom);
-
-  return null;
-}
 
 export default function Map() {
   const [stops, setStops] = useState<Stop[]>([]);
@@ -276,48 +231,13 @@ useEffect(() => {
       mapCenter={mapCenter}
     />
 
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      <MapContainer
-        center={mapCenter}
-        zoom={mapZoom}
-        style={{
-          height: "55vh",
-          width: "100%",
-        }}
-      >
-        <TileLayer
-          attribution='&copy; OpenStreetMap contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-
-        <ChangeMapCenter
-          center={mapCenter}
-          zoom={mapZoom}
-        />
-
-        <MapClickHandler onMapClick={addStop} />
-
-        {/* create a marker for each stop */}
-        {stops.map((stop, index) => (
-          <Marker
-            key={index}
-            position={[stop.lat, stop.lng]}
-            icon={convoyIcon}
-          >
-            <Popup>
-              <strong>{stop.name}</strong>
-              <br />
-              Stop {index + 1}
-            </Popup>
-          </Marker>
-        ))}
-
-        {/* creates lines from point A to point B visually*/}
-        <Polyline
-          positions={routePoints}
-        />
-      </MapContainer>
-    </div>
+    <MapView
+      mapCenter={mapCenter}
+      mapZoom={mapZoom}
+      stops={stops}
+      routePoints={routePoints}
+      addStop={addStop}
+    />
     
     <RouteInfo
       startStop={startStop}
