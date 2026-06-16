@@ -6,7 +6,6 @@ import { Stop } from "../types";
 import SearchBar from "./SearchBar";
 import RouteInfo from "./RouteInfo";
 
-
 export default function Map() {
   const [stops, setStops] = useState<Stop[]>([]);
   const [routePoints, setRoutePoints] = useState<[number, number][]>([]);
@@ -35,6 +34,54 @@ useEffect(() => {
     (error) => {
       console.log("Location access denied", error);
     }
+  );
+}, []);
+
+useEffect(() => {
+  const routeData = {
+    stops,
+    routePoints,
+    routeDistance,
+    routeDuration,
+    routeGenerated,
+  };
+
+  localStorage.setItem(
+    "convoy-route",
+    JSON.stringify(routeData)
+  );
+}, [
+  stops,
+  routePoints,
+  routeDistance,
+  routeDuration,
+  routeGenerated,
+]);
+
+useEffect(() => {
+  const savedRoute =
+    localStorage.getItem("convoy-route");
+
+  if (!savedRoute) return;
+
+  const routeData = JSON.parse(savedRoute);
+
+  setStops(routeData.stops || []);
+
+  setRoutePoints(
+    routeData.routePoints || []
+  );
+
+  setRouteDistance(
+    routeData.routeDistance || 0
+  );
+
+  setRouteDuration(
+    routeData.routeDuration || 0
+  );
+
+  setRouteGenerated(
+    routeData.routeGenerated || false
   );
 }, []);
 
@@ -68,7 +115,13 @@ useEffect(() => {
   function clearRoute() {
     setStops([]);
     setRoutePoints([]);
+    setRouteDistance(0);
+    setRouteDuration(0);
     setRouteGenerated(false);
+
+    localStorage.removeItem(
+      "convoy-route"
+    );
   }
 
   // generates route when generate route button is clicked
