@@ -2,12 +2,14 @@ type ControlButtonsProps = {
   clearRoute: () => void;
   undoLastStop: () => void;
   generateRoute: () => void;
+  saveRoute: () => void;
 };
 
 export default function ControlButtons({
   clearRoute,
   undoLastStop,
   generateRoute,
+  saveRoute,
 }: ControlButtonsProps) {
   return (
     <div className="flex flex-wrap gap-3">
@@ -30,6 +32,13 @@ export default function ControlButtons({
         className="px-4 py-2 rounded-xl bg-[#FF856D] text-white hover:opacity-90 transition"
       >
         Generate Route
+      </button>
+
+      <button
+        onClick={saveRoute}
+        className="px-4 py-2 rounded-xl border border-[#FF856D] text-[#FF856D] hover:bg-[#FFF3F0] transition"
+      >
+        Save Route
       </button>
     </div>
   );

@@ -20,6 +20,7 @@ export default function Map() {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [routeDistance, setRouteDistance] = useState(0);
   const [routeDuration, setRouteDuration] = useState(0);
+  const [routeTitle, setRouteTitle] = useState("");
 
   useRoutePersistence({
     stops,
@@ -238,6 +239,35 @@ useEffect(() => {
     setRouteGenerated(false);
   }
 
+  function saveRoute() {
+    if (!routeGenerated) {
+      alert("Generate a route first");
+      return;
+    }
+
+    const savedRoutes = JSON.parse(
+      localStorage.getItem("saved-routes") || "[]"
+    );
+
+    const newRoute = {
+      id: Date.now(),
+      title:
+        routeTitle || `Route ${savedRoutes.length + 1}`,
+      stops,
+      distance: routeDistance,
+      duration: routeDuration,
+    };
+
+    savedRoutes.push(newRoute);
+
+    localStorage.setItem(
+      "saved-routes",
+      JSON.stringify(savedRoutes)
+    );
+
+    alert("Route saved!");
+  }
+
   return (
   <>
 
@@ -266,9 +296,12 @@ useEffect(() => {
       routeDistance={routeDistance}
       routeDuration={routeDuration}
       routeGenerated={routeGenerated}
+      routeTitle={routeTitle}
+      setRouteTitle={setRouteTitle}
       clearRoute={clearRoute}
       undoLastStop={undoLastStop}
       generateRoute={generateRoute}
+      saveRoute={saveRoute}
     />
   </>
 );

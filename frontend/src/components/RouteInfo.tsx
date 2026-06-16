@@ -8,9 +8,14 @@ type RouteInfoProps = {
   routeDistance: number;
   routeDuration: number;
   routeGenerated: boolean;
+
+  routeTitle: string;
+  setRouteTitle: (title: string) => void;
+
   clearRoute: () => void;
   undoLastStop: () => void;
   generateRoute: () => void;
+  saveRoute: () => void;
 };
 
 export default function RouteInfo({
@@ -20,15 +25,30 @@ export default function RouteInfo({
   routeDistance,
   routeDuration,
   routeGenerated,
+  routeTitle,
+  setRouteTitle,
   clearRoute,
   undoLastStop,
   generateRoute,
+  saveRoute,
 }: RouteInfoProps) {
   return (
     <div className="mt-4 bg-white border border-gray-200 rounded-2xl p-5">
       <h2 className="text-xl font-semibold mb-4">
         Route Summary
       </h2>
+
+      <div className="mb-4">
+        <input
+          type="text"
+          value={routeTitle}
+          onChange={(e) =>
+            setRouteTitle(e.target.value)
+          }
+          placeholder="Route title"
+          className="w-full rounded-xl border border-gray-200 px-3 py-2 outline-none focus:border-[#FF856D]"
+        />
+      </div>
 
       <div className="space-y-3 mb-5 text-sm md:text-base">
         <div className="flex justify-between">
@@ -86,6 +106,7 @@ export default function RouteInfo({
         clearRoute={clearRoute}
         undoLastStop={undoLastStop}
         generateRoute={generateRoute}
+        saveRoute={saveRoute}
       />
     </div>
   );
