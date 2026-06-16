@@ -5,6 +5,7 @@ import MapView from "./MapView";
 import { Stop } from "../types";
 import SearchBar from "./SearchBar";
 import RouteInfo from "./RouteInfo";
+import useRoutePersistence from "../hooks/useRoutePersistence";
 
 export default function Map() {
   const [stops, setStops] = useState<Stop[]>([]);
@@ -20,6 +21,20 @@ export default function Map() {
   const [routeDistance, setRouteDistance] = useState(0);
   const [routeDuration, setRouteDuration] = useState(0);
 
+  useRoutePersistence({
+    stops,
+    routePoints,
+    routeDistance,
+    routeDuration,
+    routeGenerated,
+
+    setStops,
+    setRoutePoints,
+    setRouteDistance,
+    setRouteDuration,
+    setRouteGenerated,
+  });
+
 // real-time location
 useEffect(() => {
   navigator.geolocation.getCurrentPosition(
@@ -34,54 +49,6 @@ useEffect(() => {
     (error) => {
       console.log("Location access denied", error);
     }
-  );
-}, []);
-
-useEffect(() => {
-  const routeData = {
-    stops,
-    routePoints,
-    routeDistance,
-    routeDuration,
-    routeGenerated,
-  };
-
-  localStorage.setItem(
-    "convoy-route",
-    JSON.stringify(routeData)
-  );
-}, [
-  stops,
-  routePoints,
-  routeDistance,
-  routeDuration,
-  routeGenerated,
-]);
-
-useEffect(() => {
-  const savedRoute =
-    localStorage.getItem("convoy-route");
-
-  if (!savedRoute) return;
-
-  const routeData = JSON.parse(savedRoute);
-
-  setStops(routeData.stops || []);
-
-  setRoutePoints(
-    routeData.routePoints || []
-  );
-
-  setRouteDistance(
-    routeData.routeDistance || 0
-  );
-
-  setRouteDuration(
-    routeData.routeDuration || 0
-  );
-
-  setRouteGenerated(
-    routeData.routeGenerated || false
   );
 }, []);
 
