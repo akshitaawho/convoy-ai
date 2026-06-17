@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Stop } from "../types";
 
 type UseRoutePersistenceProps = {
@@ -43,7 +43,67 @@ export default function useRoutePersistence({
   setRouteDuration,
   setRouteGenerated,
 }: UseRoutePersistenceProps) {
+
+  const hasLoaded = useRef(false);
+  const isFirstSave = useRef(true);
+
   useEffect(() => {
+    console.log("LOADING ROUTE");
+
+    const savedRoute =
+      localStorage.getItem("convoy-route");
+
+    console.log(
+      "LOCAL STORAGE VALUE:",
+      savedRoute
+    );
+
+    if (!savedRoute) return;
+
+    const routeData =
+      JSON.parse(savedRoute);
+
+    console.log(
+      "PARSED ROUTE:",
+      routeData
+    );
+
+    setStops(routeData.stops || []);
+
+    setRoutePoints(
+      routeData.routePoints || []
+    );
+
+    setRouteDistance(
+      routeData.routeDistance || 0
+    );
+
+    setRouteDuration(
+      routeData.routeDuration || 0
+    );
+
+    setRouteGenerated(
+      routeData.routeGenerated || false
+    );
+    hasLoaded.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoaded.current) return;
+
+    if (isFirstSave.current) {
+      isFirstSave.current = false;
+      return;
+    }
+
+    console.log("SAVING ROUTE", {
+      stops: stops.length,
+      routePoints: routePoints.length,
+      routeDistance,
+      routeDuration,
+      routeGenerated,
+    });
+
     const routeData = {
       stops,
       routePoints,
@@ -63,32 +123,4 @@ export default function useRoutePersistence({
     routeDuration,
     routeGenerated,
   ]);
-
-  useEffect(() => {
-    const savedRoute =
-      localStorage.getItem("convoy-route");
-
-    if (!savedRoute) return;
-
-    const routeData =
-      JSON.parse(savedRoute);
-
-    setStops(routeData.stops || []);
-
-    setRoutePoints(
-      routeData.routePoints || []
-    );
-
-    setRouteDistance(
-      routeData.routeDistance || 0
-    );
-
-    setRouteDuration(
-      routeData.routeDuration || 0
-    );
-
-    setRouteGenerated(
-      routeData.routeGenerated || false
-    );
-  }, []);
 }

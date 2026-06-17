@@ -254,6 +254,7 @@ useEffect(() => {
       title:
         routeTitle || `Route ${savedRoutes.length + 1}`,
       stops,
+      routePoints,
       distance: routeDistance,
       duration: routeDuration,
     };

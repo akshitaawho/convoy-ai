@@ -5,10 +5,47 @@ import { useEffect, useState } from "react";
 export default function SavedRoutesPage() {
   const [routes, setRoutes] = useState<any[]>([]);
 
+  function loadRoute(route: any) {
+    console.log("=================================");
+    console.log("ROUTE CLICKED");
+    console.log(route);
+
+    const routeData = {
+      stops: route.stops,
+      routePoints: route.routePoints || [],
+      routeDistance: route.distance,
+      routeDuration: route.duration,
+      routeGenerated: true,
+    };
+
+    console.log("WRITING TO convoy-route:");
+    console.log(routeData);
+
+    localStorage.setItem(
+      "convoy-route",
+      JSON.stringify(routeData)
+    );
+
+    console.log(
+      "AFTER WRITE:",
+      JSON.parse(
+        localStorage.getItem("convoy-route") || "{}"
+      )
+    );
+
+    alert("Route loaded into localStorage");
+
+    // NOW navigate
+    window.location.href = "/";
+  }
+
   useEffect(() => {
     const savedRoutes = JSON.parse(
       localStorage.getItem("saved-routes") || "[]"
     );
+
+    console.log("SAVED ROUTES:");
+    console.log(savedRoutes);
 
     setRoutes(savedRoutes);
   }, []);
@@ -27,7 +64,8 @@ export default function SavedRoutesPage() {
         {routes.map((route) => (
           <div
             key={route.id}
-            className="bg-white border border-gray-200 rounded-2xl p-4"
+            onClick={() => loadRoute(route)}
+            className="bg-white border border-gray-200 rounded-2xl p-4 cursor-pointer hover:border-[#FF856D] transition"
           >
             <h2 className="font-semibold text-lg">
               {route.title}
