@@ -1,4 +1,5 @@
 import MapWrapper from "../src/components/MapWrapper";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -10,6 +11,15 @@ export default function Home() {
       <p className="text-gray-500 mb-6">
         Travel together.
       </p>
+
+      <div className="mb-6">
+        <Link
+          href="/saved-routes"
+          className="inline-flex items-center px-4 py-2 rounded-xl border border-gray-300 bg-white hover:bg-gray-100 transition"
+        >
+          Saved Routes
+        </Link>
+      </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="w-full">

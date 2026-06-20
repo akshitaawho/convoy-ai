@@ -11,11 +11,12 @@ export default function SavedRoutesPage() {
     console.log(route);
 
     const routeData = {
-      stops: route.stops,
-      routePoints: route.routePoints || [],
-      routeDistance: route.distance,
-      routeDuration: route.duration,
-      routeGenerated: true,
+        stops: route.stops,
+        routePoints: route.routePoints || [],
+        routeDistance: route.distance,
+        routeDuration: route.duration,
+        routeGenerated: true,
+        routeTitle: route.title,
     };
 
     console.log("WRITING TO convoy-route:");

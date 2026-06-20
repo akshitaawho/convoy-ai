@@ -6,6 +6,7 @@ import { Stop } from "../types";
 import SearchBar from "./SearchBar";
 import RouteInfo from "./RouteInfo";
 import useRoutePersistence from "../hooks/useRoutePersistence";
+import useRouteManager from "../hooks/useRouteManager";
 
 export default function Map() {
   const [stops, setStops] = useState<Stop[]>([]);
@@ -21,6 +22,24 @@ export default function Map() {
   const [routeDistance, setRouteDistance] = useState(0);
   const [routeDuration, setRouteDuration] = useState(0);
   const [routeTitle, setRouteTitle] = useState("");
+  const {
+    clearRoute,
+    generateRoute,
+    undoLastStop,
+    saveRoute,
+  } = useRouteManager({
+    stops,
+    setStops,
+    routePoints,
+    setRoutePoints,
+    routeDistance,
+    setRouteDistance,
+    routeDuration,
+    setRouteDuration,
+    routeGenerated,
+    setRouteGenerated,
+    routeTitle,
+  });
 
   useRoutePersistence({
     stops,
@@ -28,13 +47,27 @@ export default function Map() {
     routeDistance,
     routeDuration,
     routeGenerated,
+    routeTitle,
 
     setStops,
     setRoutePoints,
     setRouteDistance,
     setRouteDuration,
     setRouteGenerated,
+    setRouteTitle,
   });
+
+
+  useEffect(() => {
+    if (stops.length > 0) {
+      setMapCenter([
+        stops[0].lat,
+        stops[0].lng,
+      ]);
+
+      setMapZoom(12);
+    }
+  }, [stops]);
 
 // real-time location
 useEffect(() => {
@@ -76,102 +109,6 @@ useEffect(() => {
     ]);
 
     setRouteGenerated(false);
-  }
-
-  // to clear the created route, clearRoute button added in Selected Stops div
-  // React updates the UI automatically, when the when stops become an empty array, markers, route lines and stop list dissapears.
-  function clearRoute() {
-    setStops([]);
-    setRoutePoints([]);
-    setRouteDistance(0);
-    setRouteDuration(0);
-    setRouteGenerated(false);
-
-    localStorage.removeItem(
-      "convoy-route"
-    );
-  }
-
-  // generates route when generate route button is clicked
-  async function generateRoute() {
-    console.log("Generating route...");
-
-    if (stops.length < 2) {
-      alert("Select at least 2 stops");
-      return;
-    }
-
-    const response = await fetch("/api/route", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        stops,
-      }),
-    });
-
-    const data = await response.json();
-
-    console.log(data);
-
-    setRouteDistance(data.routes[0].distance);
-    setRouteDuration(data.routes[0].duration);
-
-    const coordinates =
-      data.routes[0].geometry.coordinates;
-
-    const route = coordinates.map(
-      ([lng, lat]: [number, number]) =>
-        [lat, lng] as [number, number]
-    );
-
-    setRoutePoints(route);
-
-    setRouteGenerated(true);
-  }
-
-  // undos the previous stop
-  async function undoLastStop() {
-    const updatedStops = stops.slice(0, -1);
-
-    setStops(updatedStops);
-
-    if (updatedStops.length < 2) {
-      setRoutePoints([]);
-      setRouteDistance(0);
-      setRouteDuration(0);
-      setRouteGenerated(false);
-      return;
-    }
-
-    const response = await fetch("/api/route", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        stops: updatedStops,
-      }),
-    });
-
-    const data = await response.json();
-
-    const coordinates =
-      data.routes[0].geometry.coordinates;
-
-    const route = coordinates.map(
-      ([lng, lat]: [number, number]) =>
-        [lat, lng] as [number, number]
-    );
-
-    setRoutePoints(route);
-
-    setRouteDistance(data.routes[0].distance);
-
-    setRouteDuration(data.routes[0].duration);
-
-    setRouteGenerated(true);
   }
 
   async function searchLocation() {
@@ -237,36 +174,6 @@ useEffect(() => {
     ]);
 
     setRouteGenerated(false);
-  }
-
-  function saveRoute() {
-    if (!routeGenerated) {
-      alert("Generate a route first");
-      return;
-    }
-
-    const savedRoutes = JSON.parse(
-      localStorage.getItem("saved-routes") || "[]"
-    );
-
-    const newRoute = {
-      id: Date.now(),
-      title:
-        routeTitle || `Route ${savedRoutes.length + 1}`,
-      stops,
-      routePoints,
-      distance: routeDistance,
-      duration: routeDuration,
-    };
-
-    savedRoutes.push(newRoute);
-
-    localStorage.setItem(
-      "saved-routes",
-      JSON.stringify(savedRoutes)
-    );
-
-    alert("Route saved!");
   }
 
   return (

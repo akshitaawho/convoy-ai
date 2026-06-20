@@ -29,6 +29,12 @@ type UseRoutePersistenceProps = {
   setRouteGenerated: React.Dispatch<
     React.SetStateAction<boolean>
   >;
+
+  routeTitle: string;
+
+  setRouteTitle: React.Dispatch<
+    React.SetStateAction<string>
+  >;
 };
 
 export default function useRoutePersistence({
@@ -37,11 +43,13 @@ export default function useRoutePersistence({
   routeDistance,
   routeDuration,
   routeGenerated,
+  routeTitle,
   setStops,
   setRoutePoints,
   setRouteDistance,
   setRouteDuration,
   setRouteGenerated,
+  setRouteTitle,
 }: UseRoutePersistenceProps) {
 
   const hasLoaded = useRef(false);
@@ -85,6 +93,11 @@ export default function useRoutePersistence({
     setRouteGenerated(
       routeData.routeGenerated || false
     );
+
+    setRouteTitle(
+      routeData.routeTitle || ""
+    );
+
     hasLoaded.current = true;
   }, []);
 
@@ -110,6 +123,7 @@ export default function useRoutePersistence({
       routeDistance,
       routeDuration,
       routeGenerated,
+      routeTitle,
     };
 
     localStorage.setItem(
@@ -122,5 +136,6 @@ export default function useRoutePersistence({
     routeDistance,
     routeDuration,
     routeGenerated,
+    routeTitle,
   ]);
 }

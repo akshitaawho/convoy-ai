@@ -100,7 +100,13 @@ export default function MapView({
           </Marker>
         ))}
 
-        <Polyline positions={routePoints} />
+        <Polyline
+          positions={routePoints}
+          pathOptions={{
+            color: "red",
+            weight: 8,
+          }}
+        />
       </MapContainer>
     </div>
   );
