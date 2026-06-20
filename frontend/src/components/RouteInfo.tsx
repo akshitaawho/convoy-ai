@@ -68,8 +68,11 @@ export default function RouteInfo({
         <div className="flex justify-between">
           <span>Duration</span>
           <span className="font-medium">
-            {(routeDuration / 60).toFixed(0)} min
-          </span>
+          {Math.floor(routeDuration / 3600)}h{" "}
+          {Math.floor(
+            (routeDuration % 3600) / 60
+          )}m
+        </span>
         </div>
 
         <div className="flex justify-between">

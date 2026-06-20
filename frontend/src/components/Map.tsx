@@ -112,15 +112,16 @@ useEffect(() => {
   }
 
   async function searchLocation() {
-    console.log("Searching for:", searchText);
+    if (!searchText.trim()) {
+      alert("Please enter a location");
+      return;
+    }
 
     const response = await fetch(
       `/api/suggestions?q=${encodeURIComponent(searchText)}`
     );
 
     const data = await response.json();
-
-    console.log(data);
 
     if (data.length > 0) {
       const lat = Number(data[0].lat);
